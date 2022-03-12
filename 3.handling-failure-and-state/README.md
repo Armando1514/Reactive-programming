@@ -181,7 +181,9 @@ class UserProcessor extends Actor {
     			emit(PostCreated(text), QuotaReached)
     case e: Event => 
     	// Once the event is send to the log and saved, we update the state of the current actor.
-    // NOTE: if between sending the event and receiving the event, a new state comes in, it will perform the check with the old state and save the blog even if the state is suppose to be disabled for quota reached. The solution can be to APPLYING THE EVENT BEFORE PERSISTING IN TO THE LOG (THAT EVENTUALLY WILL HAPPEN). DOWNSIDE: IN CASE OF A FAILURE BEFORE STATE IS SENT, THE ACTOR WILL NOT REACH THE LAST STATE AFTER THE RECOVER, BECAUSE THE EVENT HAS NOT BEEN PERSISTED BEFORE BEING APPLIED. SO YOU NEED TO CHOOSE BETWEEN CORRECT PERSISTENT OR CORRECT BEHAVIOUR. OR THIRD WAY... PERFORMANCE DOWNGRADE, NEW EVENTS ARE KEEPED BUFFERED AND NOT PROCESSED UNTIL THE EVENTS HAS BEEN PERSISTED. SEE THE EXAMPLE BELOW FOR THIS LAST WAY OF HANDLING PERSISTENCY.
+    /* 
+    NOTE: if between sending the event and receiving the event, a new state comes in, it will perform the check with the old state and save the blog even if the state is suppose to be disabled for quota reached. The solution can be to APPLYING THE EVENT BEFORE PERSISTING IN TO THE LOG (THAT EVENTUALLY WILL HAPPEN). DOWNSIDE: IN CASE OF A FAILURE BEFORE STATE IS SENT, THE ACTOR WILL NOT REACH THE LAST STATE AFTER THE RECOVER, BECAUSE THE EVENT HAS NOT BEEN PERSISTED BEFORE BEING APPLIED. SO YOU NEED TO CHOOSE BETWEEN CORRECT PERSISTENT OR CORRECT BEHAVIOUR. OR THIRD WAY... PERFORMANCE DOWNGRADE, NEW EVENTS ARE KEEPED BUFFERED AND NOT PROCESSED UNTIL THE EVENTS HAS BEEN PERSISTED. SEE THE EXAMPLE BELOW FOR THIS LAST WAY OF HANDLING PERSISTENCY. 
+    */
     	state = state.updated(e)
   }
   
