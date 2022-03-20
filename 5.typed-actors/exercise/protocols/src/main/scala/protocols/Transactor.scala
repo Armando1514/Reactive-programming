@@ -32,7 +32,7 @@ object Transactor:
     */
   def apply[T](value: T, sessionTimeout: FiniteDuration): Behavior[Command[T]] =
     SelectiveReceive(30, idle(value, sessionTimeout).asInstanceOf[Behavior[Command[T]]])
-
+c
   /**
     * @return A behavior that defines how to react to any [[PrivateCommand]] when the transactor
     *         has no currently running session.
